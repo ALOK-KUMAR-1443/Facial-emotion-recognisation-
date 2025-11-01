@@ -41,16 +41,20 @@ DATASET_PATH = '/kaggle/input/your-dataset-name/DATASET'  # ⚠️ UPDATE THIS
 with open('configs/placental.yml', 'r') as f:
     config = yaml.safe_load(f)
 
+# Update for folder-based dataset (Kaggle)
 config['data']['dataroot'] = DATASET_PATH
+config['data']['use_folder_structure'] = True  # Enable folder structure
 config['data']['val_split'] = 0.2  # 20% validation
 config['training']['batch_size'] = 8  # Optimize for GPU
 config['training']['n_epochs'] = 50  # Reduce epochs
+config['data']['num_workers'] = 2  # Reduce workers for Kaggle
 
 os.makedirs('/kaggle/working/checkpoints', exist_ok=True)
 with open('configs/placental.yml', 'w') as f:
     yaml.dump(config, f)
 
 print(f"✓ Dataset: {DATASET_PATH}")
+print("✓ Using folder structure (Kaggle mode)")
 print("✓ Train/Val split: 80%/20%")
 print(f"✓ Batch: {config['training']['batch_size']}, Epochs: {config['training']['n_epochs']}")
 

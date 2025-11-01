@@ -15,6 +15,63 @@ import json, numbers
 from glob import glob
 import pickle
 
+# Folder-based dataset for Kaggle
+class FolderDataset(Dataset):
+    """Dataset loader for folder structure (train/class_1/, train/class_2/, etc.)"""
+    def __init__(self, data_root, split='train', train=True):
+        self.trainsize = (224, 224)
+        self.train = train
+        self.data_list = []
+        
+        # Build dataset from folder structure
+        split_path = os.path.join(data_root, split)
+        if not os.path.exists(split_path):
+            raise ValueError(f"Path does not exist: {split_path}")
+        
+        classes = sorted(os.listdir(split_path))
+        self.class_to_idx = {cls_name: idx for idx, cls_name in enumerate(classes)}
+        
+        for cls_name in classes:
+            cls_path = os.path.join(split_path, cls_name)
+            if os.path.isdir(cls_path):
+                for img_name in os.listdir(cls_path):
+                    if img_name.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif')):
+                        img_path = os.path.join(cls_path, img_name)
+                        label = self.class_to_idx[cls_name]
+                        self.data_list.append({'img_root': img_path, 'label': label})
+        
+        self.size = len(self.data_list)
+        print(f"Loaded {self.size} images from {split_path} with {len(classes)} classes")
+        
+        # Transformations
+        if train:
+            self.transform_center = transforms.Compose([
+                trans.CropCenterSquare(),
+                transforms.Resize(self.trainsize),
+                trans.RandomHorizontalFlip(),
+                trans.RandomRotation(30),
+                transforms.ToTensor(),
+                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+            ])
+        else:
+            self.transform_center = transforms.Compose([
+                trans.CropCenterSquare(),
+                transforms.Resize(self.trainsize),
+                transforms.ToTensor(),
+                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+            ])
+    
+    def __getitem__(self, index):
+        data_pac = self.data_list[index]
+        img_path = data_pac['img_root']
+        img = Image.open(img_path).convert('RGB')
+        img_torch = self.transform_center(img)
+        label = int(data_pac['label'])
+        return img_torch, label
+    
+    def __len__(self):
+        return self.size
+
 class BUDataset(Dataset):
     def __init__(self, data_list, train=True):
         self.trainsize = (224,224)

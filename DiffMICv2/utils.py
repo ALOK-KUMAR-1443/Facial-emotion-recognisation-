@@ -108,25 +108,37 @@ def get_dataset(config, split='train'):
     """
     from torch.utils.data import Subset
     from sklearn.model_selection import train_test_split
+    from dataloader.loading import FolderDataset
     
     data_object = None
     val_split = config.data.get('val_split', 0.2)  # Default 20% for validation
     
-    if config.data.dataset == "PLACENTAL":
-        full_train_dataset = BUDataset(data_list=config.data.traindata, train=True)
-        test_dataset = BUDataset(data_list=config.data.testdata, train=False)
-    elif config.data.dataset == "APTOS":
-        full_train_dataset = APTOSDataset(data_list=config.data.traindata, train=True)
-        test_dataset = APTOSDataset(data_list=config.data.testdata, train=False)
-    elif config.data.dataset == "ISIC":
-        full_train_dataset = ISICDataset(data_list=config.data.traindata, train=True)
-        test_dataset = ISICDataset(data_list=config.data.testdata, train=False)
-    elif config.data.dataset == "CHEST":
-        full_train_dataset = ChestXrayDataSet(image_list_file=config.data.traindata, train=True)
-        test_dataset = ChestXrayDataSet(image_list_file=config.data.testdata, train=False)
+    # Check if using folder structure (Kaggle) or pickle files (original)
+    use_folder_structure = config.data.get('use_folder_structure', False)
+    data_root = config.data.get('dataroot', './dataset/')
+    
+    if use_folder_structure:
+        # Folder-based dataset for Kaggle
+        print(f"Loading folder-based dataset from: {data_root}")
+        full_train_dataset = FolderDataset(data_root=data_root, split='train', train=True)
+        test_dataset = FolderDataset(data_root=data_root, split='test', train=False)
     else:
-        raise NotImplementedError(
-            "Options: toy (classification of two Gaussian), MNIST, FashionMNIST, CIFAR10.")
+        # Original pickle-based dataset
+        if config.data.dataset == "PLACENTAL":
+            full_train_dataset = BUDataset(data_list=config.data.traindata, train=True)
+            test_dataset = BUDataset(data_list=config.data.testdata, train=False)
+        elif config.data.dataset == "APTOS":
+            full_train_dataset = APTOSDataset(data_list=config.data.traindata, train=True)
+            test_dataset = APTOSDataset(data_list=config.data.testdata, train=False)
+        elif config.data.dataset == "ISIC":
+            full_train_dataset = ISICDataset(data_list=config.data.traindata, train=True)
+            test_dataset = ISICDataset(data_list=config.data.testdata, train=False)
+        elif config.data.dataset == "CHEST":
+            full_train_dataset = ChestXrayDataSet(image_list_file=config.data.traindata, train=True)
+            test_dataset = ChestXrayDataSet(image_list_file=config.data.testdata, train=False)
+        else:
+            raise NotImplementedError(
+                "Options: toy (classification of two Gaussian), MNIST, FashionMNIST, CIFAR10.")
     
     # Split train into train/val if val_split > 0
     if val_split > 0 and split in ['train', 'val']:
