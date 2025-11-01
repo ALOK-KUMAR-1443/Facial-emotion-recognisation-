@@ -98,24 +98,57 @@ def adjust_learning_rate(optimizer, epoch, config):
     return lr
 
 
-def get_dataset(config):
+def get_dataset(config, split='train'):
+    """
+    Get dataset with optional train/val split.
+    
+    Args:
+        config: Configuration object
+        split: 'train', 'val', or 'test'
+    """
+    from torch.utils.data import Subset
+    from sklearn.model_selection import train_test_split
+    
     data_object = None
+    val_split = config.data.get('val_split', 0.2)  # Default 20% for validation
+    
     if config.data.dataset == "PLACENTAL":
-        train_dataset = BUDataset(data_list=config.data.traindata, train=True)
+        full_train_dataset = BUDataset(data_list=config.data.traindata, train=True)
         test_dataset = BUDataset(data_list=config.data.testdata, train=False)
     elif config.data.dataset == "APTOS":
-        train_dataset = APTOSDataset(data_list=config.data.traindata, train=True)
+        full_train_dataset = APTOSDataset(data_list=config.data.traindata, train=True)
         test_dataset = APTOSDataset(data_list=config.data.testdata, train=False)
     elif config.data.dataset == "ISIC":
-        train_dataset = ISICDataset(data_list=config.data.traindata, train=True)
+        full_train_dataset = ISICDataset(data_list=config.data.traindata, train=True)
         test_dataset = ISICDataset(data_list=config.data.testdata, train=False)
     elif config.data.dataset == "CHEST":
-
-        train_dataset = ChestXrayDataSet(image_list_file=config.data.traindata, train=True)
+        full_train_dataset = ChestXrayDataSet(image_list_file=config.data.traindata, train=True)
         test_dataset = ChestXrayDataSet(image_list_file=config.data.testdata, train=False)
     else:
         raise NotImplementedError(
             "Options: toy (classification of two Gaussian), MNIST, FashionMNIST, CIFAR10.")
+    
+    # Split train into train/val if val_split > 0
+    if val_split > 0 and split in ['train', 'val']:
+        indices = list(range(len(full_train_dataset)))
+        labels = [full_train_dataset[i][1] for i in indices]
+        
+        train_idx, val_idx = train_test_split(
+            indices,
+            test_size=val_split,
+            random_state=42,
+            stratify=labels
+        )
+        
+        if split == 'train':
+            train_dataset = Subset(full_train_dataset, train_idx)
+            print(f"Train dataset: {len(train_dataset)} samples ({(1-val_split)*100:.0f}%)")
+        else:  # split == 'val'
+            train_dataset = Subset(full_train_dataset, val_idx)
+            print(f"Validation dataset: {len(train_dataset)} samples ({val_split*100:.0f}%)")
+    else:
+        train_dataset = full_train_dataset
+    
     return data_object, train_dataset, test_dataset
 
 from sklearn.metrics import cohen_kappa_score

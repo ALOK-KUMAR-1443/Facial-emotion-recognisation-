@@ -217,7 +217,7 @@ class CoolSystem(pl.LightningModule):
         # return {"gt":y_batch,"pred":y_pred}
     
     def train_dataloader(self):
-        data_object, train_dataset, test_dataset = get_dataset(self.params)
+        data_object, train_dataset, test_dataset = get_dataset(self.params, split='train')
         train_loader = DataLoader(
             train_dataset,
             batch_size=self.params.training.batch_size,
@@ -228,15 +228,20 @@ class CoolSystem(pl.LightningModule):
         return train_loader
     
     def val_dataloader(self):
-        data_object, train_dataset, test_dataset = get_dataset(self.params)
+        # Use validation split from train data if val_split > 0, else use test data
+        val_split = self.params.data.get('val_split', 0.0)
+        if val_split > 0:
+            data_object, val_dataset, _ = get_dataset(self.params, split='val')
+        else:
+            data_object, _, val_dataset = get_dataset(self.params, split='test')
 
-        test_loader = DataLoader(
-            test_dataset,
+        val_loader = DataLoader(
+            val_dataset,
             batch_size=self.params.testing.batch_size,
             shuffle=False,
             num_workers=self.params.data.num_workers,
         )
-        return test_loader  
+        return val_loader  
 
 
 def main():
