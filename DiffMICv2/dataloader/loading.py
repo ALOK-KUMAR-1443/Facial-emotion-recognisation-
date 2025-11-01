@@ -2,18 +2,28 @@ import os, torch, cv2, random
 import numpy as np
 from torch.utils.data import Dataset, Sampler
 import torchvision.transforms as transforms
-from scipy.ndimage.morphology import binary_erosion
+from scipy.ndimage import binary_erosion  # NumPy 2.x compatible import
 import torchvision.transforms.functional as TF
 from PIL import Image, ImageOps
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 from skimage import filters
-import numpy as np
 import imageio
 import dataloader.transforms as trans
 import json, numbers
 from glob import glob
 import pickle
+
+# NumPy 2.x compatibility: ensure proper dtype conversions
+def ensure_numpy_array(data, dtype=None):
+    """Convert to NumPy array with proper dtype for NumPy 2.x"""
+    if isinstance(data, np.ndarray):
+        arr = data
+    else:
+        arr = np.array(data)
+    if dtype is not None:
+        arr = np.asarray(arr, dtype=dtype)
+    return np.ascontiguousarray(arr)  # Ensure C-contiguous for NumPy 2.x
 
 # Folder-based dataset for Kaggle
 class FolderDataset(Dataset):
@@ -246,7 +256,8 @@ class ChestXrayDataSet(Dataset):
                 image_name= items[0]
                 label = items[1:]
                 label = [int(i) for i in label]
-                label.append(1) if (np.array(label)==0).all() else label.append(0)
+                # NumPy 2.x: explicit dtype conversion
+                label.append(1) if (ensure_numpy_array(label, dtype=np.int32)==0).all() else label.append(0)
                 image_name = os.path.join(data_dir, image_name)
                 image_names.append(image_name)
                 labels.append(label)

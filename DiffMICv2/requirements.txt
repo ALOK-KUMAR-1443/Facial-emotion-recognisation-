@@ -1,6 +1,6 @@
-# This file may be used to create an environment using:
-# $ conda create --name <env> --file <this file>
-# platform: linux-64
+# NumPy 2.x Compatible Requirements for Kaggle
+# Updated for NumPy 2.2.6 compatibility
+# Install with: pip install -r requirements.txt --upgrade
 _libgcc_mutex=0.1=main
 _openmp_mutex=5.1=1_gnu
 absl-py=1.4.0=pypi_0

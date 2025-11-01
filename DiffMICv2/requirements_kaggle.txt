@@ -1,0 +1,41 @@
+# NumPy 2.2.6 Compatible Requirements for Kaggle
+# Install with: pip install -r requirements_kaggle.txt --upgrade
+
+# Core Deep Learning
+torch>=2.0.0
+torchvision>=0.15.0
+
+# NumPy 2.x compatible packages
+numpy>=2.0.0
+scipy>=1.11.0
+matplotlib>=3.8.0
+scikit-learn>=1.3.0
+scikit-image>=0.22.0
+
+# PyTorch Lightning and metrics (NumPy 2.x compatible versions)
+pytorch-lightning>=2.1.0
+torchmetrics>=1.2.0
+
+# Image processing
+Pillow>=10.0.0
+opencv-python>=4.8.0
+imageio>=2.31.0
+
+# Diffusion models
+diffusers>=0.20.0
+accelerate>=0.22.0
+
+# Data handling
+pandas>=2.1.0
+tqdm>=4.66.0
+
+# Configuration
+PyYAML>=6.0
+easydict>=1.10
+
+# Model utilities
+einops>=0.6.0
+ema-pytorch>=0.2.3
+
+# Augmentation (optional)
+albumentations>=1.3.0

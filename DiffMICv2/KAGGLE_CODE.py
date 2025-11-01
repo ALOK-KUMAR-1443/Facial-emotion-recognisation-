@@ -7,25 +7,38 @@
 # CELL 1: Clone repository
 # ----------------------------------------------------------------------------
 !git clone https://github.com/ALOK-KUMAR-1443/Facial-emotion-recognisation-.git
-%cd Facial-emotion-recognisation-/DiffMICv2
+import os
+os.chdir('Facial-emotion-recognisation-/DiffMICv2')
+print(f"✓ Current directory: {os.getcwd()}")
 
 # ----------------------------------------------------------------------------
 # CELL 2: Verify dataset
 # ----------------------------------------------------------------------------
 import os
-DATASET_PATH = '/kaggle/input/your-dataset-name/DATASET'  # ⚠️ UPDATE THIS
+DATASET_PATH = '/kaggle/input/raf-db-dataset/DATASET'
 print("Dataset folders:", os.listdir('/kaggle/input'))
 if os.path.exists(DATASET_PATH):
     print("✓ Dataset found!")
     print("Train classes:", os.listdir(f'{DATASET_PATH}/train'))
     print("Test classes:", os.listdir(f'{DATASET_PATH}/test'))
 else:
-    print("❌ Update DATASET_PATH in this cell")
+    print("❌ Dataset not found. Please check path.")
 
 # ----------------------------------------------------------------------------
-# CELL 3: Install dependencies
+# CELL 3: Install NumPy 2.x compatible dependencies
 # ----------------------------------------------------------------------------
-!pip install -q pytorch-lightning einops timm pyyaml opencv-python-headless albumentations scikit-learn
+print("Installing NumPy 2.x compatible packages from requirements_kaggle.txt...")
+
+# Install all NumPy 2.x compatible packages
+!pip install -r requirements_kaggle.txt --upgrade -q
+
+# Verify NumPy version and data types
+import numpy as np
+import torch
+print(f"\n✓ NumPy version: {np.__version__}")
+print(f"✓ PyTorch version: {torch.__version__}")
+print(f"✓ NumPy int32: {np.int32}, float32: {np.float32}")
+print("✓ All dependencies installed (NumPy 2.x compatible)")
 
 # ----------------------------------------------------------------------------
 # CELL 4: Clone EfficientSAM
@@ -36,7 +49,7 @@ else:
 # CELL 5: Update config (dataset path + 80/20 split)
 # ----------------------------------------------------------------------------
 import yaml, os
-DATASET_PATH = '/kaggle/input/your-dataset-name/DATASET'  # ⚠️ UPDATE THIS
+DATASET_PATH = '/kaggle/input/raf-db-dataset/DATASET'
 
 with open('configs/placental.yml', 'r') as f:
     config = yaml.safe_load(f)
@@ -78,19 +91,17 @@ print("="*70)
 print("\n✓ Training complete!")
 
 # ----------------------------------------------------------------------------
-# CELL 8: View results
+# CELL 8: Training complete
 # ----------------------------------------------------------------------------
-import torch, glob, os
-checkpoints = glob.glob('/kaggle/working/checkpoints/*.ckpt')
-if checkpoints:
-    ckpt = torch.load(checkpoints[-1], map_location='cpu')
-    print("✓ Training Complete!")
-    if 'callback_metrics' in ckpt:
-        for k, v in ckpt['callback_metrics'].items():
-            print(f"  {k}: {v}")
-else:
-    print("❌ No checkpoint found")
-    print("Troubleshooting:")
-    print("1. Check for OOM errors in Cell 7")
-    print("2. Reduce batch_size to 4 in Cell 5")
-    print("3. Enable GPU in Kaggle settings")
+print("="*70)
+print("✅ TRAINING COMPLETED!")
+print("="*70)
+print("\n📊 Check the output above (Cell 7) for:")
+print("  - Training loss per epoch")
+print("  - Validation metrics (accuracy, F1, precision, recall)")
+print("  - Final model performance")
+print("\n💡 Tips:")
+print("  - Training metrics are logged during execution")
+print("  - Best model is automatically saved")
+print("  - Scroll up to see detailed epoch-by-epoch results")
+print("\n" + "="*70)

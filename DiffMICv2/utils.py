@@ -307,7 +307,8 @@ def compute_AUCs(gt, pred):
     pred_np[np.where(np.isnan(pred_np))] = 0.
     for i in range(15):
         AUROCs.append(roc_auc_score(gt_np[:, i], pred_np[:, i],average=None))
-    AUROCs_mean = np.array(AUROCs[:-1]).mean()
+    # NumPy 2.x: explicit dtype conversion
+    AUROCs_mean = np.asarray(AUROCs[:-1], dtype=np.float32).mean()
     print(AUROCs)
     return AUROCs_mean
 
@@ -316,9 +317,10 @@ def compute_AUCs(gt, pred):
 import scipy.special
 
 # for left-multiplication for RGB -> Y'PbPr
-RGB_TO_YUV = np.array([[0.29900, -0.16874, 0.50000],
-                       [0.58700, -0.33126, -0.41869],
-                       [0.11400, 0.50000, -0.08131]])
+# NumPy 2.x: explicit dtype conversion
+RGB_TO_YUV = np.asarray([[0.29900, -0.16874, 0.50000],
+                         [0.58700, -0.33126, -0.41869],
+                         [0.11400, 0.50000, -0.08131]], dtype=np.float32)
 
 
 def normalize_data(x, mode=None):

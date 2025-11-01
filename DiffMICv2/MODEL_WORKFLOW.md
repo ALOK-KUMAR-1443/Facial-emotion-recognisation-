@@ -3,6 +3,7 @@
 ## 🔄 Complete Training Pipeline
 
 ### **Phase 1: Setup & Data Loading**
+
 ```
 1. Clone Repository
    └─> Load project files from GitHub
@@ -22,6 +23,7 @@
 ```
 
 ### **Phase 2: Data Splitting (80/20)**
+
 ```
 5. Train/Val Split
    ├─> Get all train samples
@@ -33,21 +35,22 @@
 ```
 
 ### **Phase 3: Model Initialization**
+
 ```
 6. Initialize DiffMIC-v2 Components:
-   
+
    a) Auxiliary Classifier (DCG)
       ├─> ResNet18 backbone
       ├─> Global and local predictions
       ├─> Load pretrained weights
       └─> Freeze (eval mode)
-   
+
    b) Diffusion Model (ConditionalModel)
       ├─> U-Net architecture
       ├─> Timestep encoding
       ├─> Conditional guidance
       └─> Trainable parameters
-   
+
    c) Diffusion Sampler (SR3Sampler)
       ├─> DDIM scheduler
       ├─> 1000 train timesteps
@@ -55,9 +58,10 @@
 ```
 
 ### **Phase 4: Training Loop**
+
 ```
 7. For each epoch (1 to n_epochs):
-   
+
    A. Training Phase:
       ├─> For each batch in train_loader:
       │   │
@@ -90,7 +94,7 @@
       │       └─> Log train_loss
       │
       └─> Update learning rate (CosineAnnealingLR)
-   
+
    B. Validation Phase (every 5 epochs):
       ├─> For each batch in val_loader:
       │   │
@@ -119,6 +123,7 @@
 ```
 
 ### **Phase 5: Testing**
+
 ```
 8. Load Best Checkpoint
    └─> Highest F1 score model
@@ -175,22 +180,26 @@ Input Image (224x224x3)
 ## 🎯 Key Components
 
 ### **1. Dual-Conditional Guidance**
+
 - **Global Path**: Overall image classification
 - **Local Path**: Patch-level predictions
 - **Guided Map**: Interpolates between global and local
 - **Purpose**: Multi-granularity attention
 
 ### **2. Heterologous Diffusion**
+
 - **Forward Process**: Add noise to labels (not images)
 - **Reverse Process**: Denoise labels to get predictions
 - **Advantage**: Works in latent space, more efficient
 
 ### **3. Attention Mechanism**
+
 - **Patches**: Local image regions
 - **Attention Maps**: Spatial importance weights
 - **Integration**: Guide diffusion process
 
 ### **4. Loss Function**
+
 ```python
 Focal Loss = (1 + α(1-p)^γ) * MSE(noise_pred, noise_gt)
 where:
@@ -202,6 +211,7 @@ where:
 ## 📈 Training Monitoring
 
 **Logged Metrics:**
+
 - `train_loss`: Training loss per batch
 - `accuracy`: Validation accuracy
 - `f1`: F1 score (used for checkpoint selection)
@@ -211,6 +221,7 @@ where:
 - `kappa`: Cohen's Kappa
 
 **Checkpoints:**
+
 - Saved every epoch
 - Best model: Highest F1 score
 - Last model: Most recent
@@ -218,6 +229,7 @@ where:
 ## ⚙️ Hyperparameters
 
 **Training:**
+
 - Batch size: 8 (Kaggle optimized)
 - Epochs: 50 (adjustable)
 - Learning rate: 0.001
@@ -225,12 +237,14 @@ where:
 - Validation frequency: Every 5 epochs
 
 **Diffusion:**
+
 - Train timesteps: 1000
 - Test timesteps: 100
 - Beta schedule: Linear
 - Beta range: [0.0001, 0.02]
 
 **Data:**
+
 - Image size: 224x224
 - Normalization: ImageNet stats
 - Augmentation: Flip, rotation (train only)
@@ -262,18 +276,21 @@ Cell 8: View results
 ## ✅ Validation Checks
 
 **Before Training:**
+
 - ✓ Dataset path exists
 - ✓ Train/test folders present
 - ✓ GPU available
 - ✓ Dependencies installed
 
 **During Training:**
+
 - ✓ Loss decreasing
 - ✓ Validation F1 improving
 - ✓ No OOM errors
 - ✓ Checkpoints saving
 
 **After Training:**
+
 - ✓ Best checkpoint exists
 - ✓ Metrics computed
 - ✓ Results logged
@@ -283,11 +300,13 @@ Cell 8: View results
 **DiffMIC-v2 = Auxiliary Classifier + Diffusion Model**
 
 1. **Auxiliary Classifier (DCG)**:
+
    - Provides prior knowledge
    - Frozen during training
    - Guides diffusion process
 
 2. **Diffusion Model**:
+
    - Main trainable component
    - Refines predictions
    - Handles uncertainty

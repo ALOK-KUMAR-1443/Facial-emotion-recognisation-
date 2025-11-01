@@ -69,10 +69,11 @@ def crop(original_img, crop_shape, crop_position, method="center",
     # else make the new matrix
     else:
         # somehow background is normalized to this number
+        # NumPy 2.x: explicit dtype conversion
         if background_val == "min":
-            output = np.ones(crop_shape) * np.min(original_img)
+            output = np.ones(crop_shape, dtype=np.float32) * np.min(original_img)
         else:
-            output = np.ones(crop_shape) * background_val
+            output = np.ones(crop_shape, dtype=np.float32) * background_val
         real_x_delta = max_x - min_x
         real_y_delta = max_y - min_y
         origin_x = crop_shape[0] - real_x_delta
@@ -90,7 +91,8 @@ def get_crop_mask(loc, crop_shape, image_shape, method, indicator=True):
     :param method:
     :return:
     """
-    crop_map = np.zeros(image_shape)
+    # NumPy 2.x: explicit dtype conversion
+    crop_map = np.zeros(image_shape, dtype=np.float32)
     for crop_loc in loc:
         # this is the indicator for point of crop
         if indicator:

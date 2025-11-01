@@ -81,8 +81,9 @@ class adjust_light():
         if seed > 0.5:
             gamma = random.random() * 3 + 0.5
             invGamma = 1.0 / gamma
-            table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]).astype(np.uint8)
-            image = cv2.LUT(np.array(image).astype(np.uint8), table).astype(np.uint8)
+            # NumPy 2.x: explicit dtype conversion with astype() instead of asarray() after operations
+            table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)], dtype=np.float32).astype(np.uint8)
+            image = cv2.LUT(np.ascontiguousarray(image, dtype=np.uint8), table).astype(np.uint8)
 
         return image
 
