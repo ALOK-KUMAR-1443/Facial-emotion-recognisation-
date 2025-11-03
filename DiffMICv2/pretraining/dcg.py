@@ -69,9 +69,9 @@ class DCG(nn.Module):
         assert np.max(top_k_prop_y) <= 1.0, "top_k_prop_y >= 1.0"
         assert np.min(top_k_prop_y) >= 0.0, "top_k_prop_y <= 0.0"
         # interpolate the crop position from cam_size to x_original
-        # NumPy 2.x: explicit dtype conversion
-        top_k_interpolate_x = np.expand_dims(np.around(top_k_prop_x * H).astype(np.float32), -1)
-        top_k_interpolate_y = np.expand_dims(np.around(top_k_prop_y * W).astype(np.float32), -1)
+        # Compatible with NumPy 1.x and 2.x
+        top_k_interpolate_x = np.expand_dims(np.around(top_k_prop_x * H), -1)
+        top_k_interpolate_y = np.expand_dims(np.around(top_k_prop_y * W), -1)
         top_k_interpolate_2d = np.concatenate([top_k_interpolate_x, top_k_interpolate_y], axis=-1)
         return top_k_interpolate_2d
 

@@ -25,20 +25,19 @@ else:
     print("❌ Dataset not found. Please check path.")
 
 # ----------------------------------------------------------------------------
-# CELL 3: Install NumPy 2.x compatible dependencies
+# CELL 3: Install required dependencies
 # ----------------------------------------------------------------------------
-print("Installing NumPy 2.x compatible packages from requirements_kaggle.txt...")
+print("Installing required packages (Kaggle-compatible)...")
 
-# Install all NumPy 2.x compatible packages
-!pip install -r requirements_kaggle.txt --upgrade -q
+# Install only missing/outdated packages
+!pip install peft>=0.17.0 diffusers>=0.20.0 accelerate einops ema-pytorch easydict -q
 
-# Verify NumPy version and data types
+# Verify versions
 import numpy as np
 import torch
 print(f"\n✓ NumPy version: {np.__version__}")
 print(f"✓ PyTorch version: {torch.__version__}")
-print(f"✓ NumPy int32: {np.int32}, float32: {np.float32}")
-print("✓ All dependencies installed (NumPy 2.x compatible)")
+print("✓ All dependencies installed (Kaggle-compatible)")
 
 # ----------------------------------------------------------------------------
 # CELL 4: Clone EfficientSAM

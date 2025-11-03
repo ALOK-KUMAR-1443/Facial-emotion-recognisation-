@@ -14,16 +14,16 @@ import json, numbers
 from glob import glob
 import pickle
 
-# NumPy 2.x compatibility: ensure proper dtype conversions
+# NumPy 1.x/2.x compatibility helper
 def ensure_numpy_array(data, dtype=None):
-    """Convert to NumPy array with proper dtype for NumPy 2.x"""
+    """Convert to NumPy array with proper dtype (compatible with NumPy 1.x and 2.x)"""
     if isinstance(data, np.ndarray):
         arr = data
     else:
         arr = np.array(data)
     if dtype is not None:
-        arr = np.asarray(arr, dtype=dtype)
-    return np.ascontiguousarray(arr)  # Ensure C-contiguous for NumPy 2.x
+        arr = arr.astype(dtype)  # Works in both NumPy 1.x and 2.x
+    return np.ascontiguousarray(arr)
 
 # Folder-based dataset for Kaggle
 class FolderDataset(Dataset):
@@ -256,8 +256,8 @@ class ChestXrayDataSet(Dataset):
                 image_name= items[0]
                 label = items[1:]
                 label = [int(i) for i in label]
-                # NumPy 2.x: explicit dtype conversion
-                label.append(1) if (ensure_numpy_array(label, dtype=np.int32)==0).all() else label.append(0)
+                # Compatible with NumPy 1.x and 2.x
+                label.append(1) if (np.array(label, dtype=np.int32)==0).all() else label.append(0)
                 image_name = os.path.join(data_dir, image_name)
                 image_names.append(image_name)
                 labels.append(label)
