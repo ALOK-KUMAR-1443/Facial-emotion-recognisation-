@@ -1,22 +1,28 @@
-# Kaggle-compatible requirements (works with pre-installed packages)
-# Install with: pip install -r requirements_kaggle.txt --no-deps
+# Kaggle-Compatible Requirements for DiffMICv2
+# TESTED & WORKING on Kaggle (November 2025)
 
-# Critical updates only (avoid breaking Kaggle environment)
-peft>=0.17.0
+# Compatible versions (install with Cell 3 in KAGGLE_CODE.py)
+numpy==1.26.4
+scipy==1.13.1
+scikit-learn==1.4.2
+
+# Diffusion models
+peft==0.17.0
 diffusers>=0.20.0
-accelerate>=0.22.0
-einops>=0.6.0
-ema-pytorch>=0.2.3
+accelerate>=0.20.0
+
+# Utilities
+einops>=0.7.0
+ema-pytorch>=0.1.0
 easydict>=1.10
 
-# Keep Kaggle's pre-installed versions for stability
-# numpy (use Kaggle default 1.26.4)
-# torch (use Kaggle default)
-# pytorch-lightning (use Kaggle default)
-# torchmetrics (use Kaggle default)
-# scipy (use Kaggle default)
-# matplotlib (use Kaggle default)
-# scikit-learn (use Kaggle default)
-# opencv-python (use Kaggle default)
-# Pillow (use Kaggle default)
-# pandas (use Kaggle default)
+# Keep Kaggle's pre-installed versions:
+# - torch (2.9.0+cu128)
+# - torchvision
+# - pytorch-lightning
+# - torchmetrics
+# - matplotlib
+# - opencv-python
+# - Pillow
+# - pandas
+# - pyyaml
